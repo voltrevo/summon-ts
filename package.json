@@ -1,0 +1,37 @@
+{
+  "name": "summon-ts",
+  "version": "0.1.0",
+  "description": "TypeScript build of the Summon compiler (via wasm).",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "build": "rm -rf dist srcWasm && tsx wasm/build.ts && tsc",
+    "test": "mocha --import=tsx tests/**/*.test.ts"
+  },
+  "keywords": [
+    "MPC",
+    "multi",
+    "party",
+    "computation",
+    "pse",
+    "cryptography",
+    "summon",
+    "compiler",
+    "arithmetic",
+    "circuit"
+  ],
+  "author": "Andrew Morris",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voltrevo/summon-ts.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chai": "^4.3.16",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.12.11",
+    "chai": "^5.1.1",
+    "mocha": "^10.4.0",
+    "tsx": "^4.9.3",
+    "typescript": "^5.4.5"
+  }
+}
