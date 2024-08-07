@@ -1,5 +1,6 @@
 tests
 wasm
-srcWasm/circom_2_arithc_ts_wasm_base64.js
-dist/srcWasm/circom_2_arithc_ts_wasm_base64.d.ts
+srcWasm/summon_ts_wasm_base64.js
+dist/srcWasm/summon_ts_wasm_base64.d.ts
 *.tgz
+.vscode
