@@ -1,8 +1,10 @@
 use std::collections::HashMap;
 
+use serde::Serialize;
+use serde_wasm_bindgen::Serializer;
 use wasm_bindgen::{prelude::*, JsError};
 use js_sys::{Array, Object, Reflect};
-use summon_compiler::{compile as summon_compile, DiagnosticLevel};
+use summon_compiler::{compile as summon_compile, DiagnosticLevel, ResolvedPath};
 use console_error_panic_hook::set_once as set_panic_hook;
 
 #[wasm_bindgen]
@@ -15,13 +17,15 @@ pub fn compile(path: &str, files: JsValue) -> Result<JsValue, JsError> {
     let files = convert_jsvalue_to_hashmap(files)?;
 
     let compile_result = summon_compile(
-        path,
+        ResolvedPath { path: path.to_string() },
         |p| files.get(p).ok_or("File not found".into()).cloned(),
     );
 
     match compile_result {
         Ok(compile_ok) => {
-            Ok(serde_wasm_bindgen::to_value(&compile_ok.circuit.to_bristol())?)
+            Ok(compile_ok.circuit.to_bristol().serialize(
+                &Serializer::new().serialize_maps_as_objects(true)
+            )?)
         },
         Err(e) => return Err('b: {
             for (_, diagnostics) in e.diagnostics {

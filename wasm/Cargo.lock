@@ -1474,7 +1474,7 @@ dependencies = [
 [[package]]
 name = "summon_compiler"
 version = "0.1.0"
-source = "git+https://github.com/voltrevo/summon?rev=a91ead6#a91ead60d5e8d56032771cb18f0f59885504bed8"
+source = "git+https://github.com/voltrevo/summon?rev=7e2abb8#7e2abb8996edb69b91739c5d45715bdd31440278"
 dependencies = [
  "num-bigint",
  "num-traits",
@@ -1492,7 +1492,9 @@ dependencies = [
  "console_error_panic_hook",
  "getrandom",
  "js-sys",
+ "serde",
  "serde-wasm-bindgen 0.6.5",
+ "serde_json",
  "summon_compiler",
  "wasm-bindgen",
  "web-sys",
