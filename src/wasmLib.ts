@@ -20,6 +20,7 @@ export function initWasmLib() {
     );
 
     bindgen.initSync(base64ToUint8Array(wasmBase64));
+    bindgen.init_ext();
     lib = bindgen;
 
     return bindgen;

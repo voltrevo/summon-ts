@@ -3,6 +3,12 @@ use std::collections::HashMap;
 use wasm_bindgen::{prelude::*, JsError};
 use js_sys::{Array, Object, Reflect};
 use summon_compiler::{compile as summon_compile, DiagnosticLevel};
+use console_error_panic_hook::set_once as set_panic_hook;
+
+#[wasm_bindgen]
+pub fn init_ext() {
+    set_panic_hook();
+}
 
 #[wasm_bindgen]
 pub fn compile(path: &str, files: JsValue) -> Result<JsValue, JsError> {
