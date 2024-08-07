@@ -10,12 +10,12 @@ npm install summon-ts
 ```
 
 ```ts
-import * as summon from 'summon';
+import * as summon from 'summon-ts';
 
 async function main() {
   await summon.init();
 
-  const circuitSrc = {
+  const circuit = summon.compile('/src/main.ts', {
     // In a real project you should be able to include these as regular files,
     // but how those files find their way into this format depends on your build
     // tool.
@@ -25,9 +25,7 @@ async function main() {
         return a + b;
       }
     `,
-  };
-
-  const circuit = summon.compile(circuitSrc);
+  });
 
   console.log(circuit);
   // {
