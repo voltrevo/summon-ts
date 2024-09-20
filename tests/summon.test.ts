@@ -53,12 +53,18 @@ describe('summon', () => {
   
     expect(circuit).to.deep.equal({
       bristol: blockTrim(`
-        2 18
+        8 24
         2 8 8
         1 8
 
-        2 1 7 15 17 XOR
+        2 1 7 15 23 XOR
         2 1 0 0 16 XOR
+        1 1 16 22 COPY
+        1 1 16 21 COPY
+        1 1 16 20 COPY
+        1 1 16 19 COPY
+        1 1 16 18 COPY
+        1 1 16 17 COPY
       `),
       info: {
         input_name_to_wire_index: {
