@@ -8,7 +8,8 @@ crate-type = ["cdylib"]
 
 [dependencies]
 wasm-bindgen = "0.2.92"
-summon_compiler = { git = "https://github.com/voltrevo/summon", rev = "7e2abb8" }
+summon_compiler = { git = "https://github.com/voltrevo/summon", rev = "59bc524" }
+boolify = { git = "https://github.com/voltrevo/boolify", rev = "84d68ed" }
 serde-wasm-bindgen = { version = "0.6.5", serialize_maps_as_objects = true }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

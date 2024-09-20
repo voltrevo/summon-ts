@@ -164,6 +164,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "boolify"
+version = "0.1.0"
+source = "git+https://github.com/voltrevo/boolify?rev=84d68ed#84d68ed665eb3372e9c872fe4edf753ced83bad2"
+dependencies = [
+ "bristol-circuit",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "bristol-circuit"
+version = "0.1.0"
+source = "git+https://github.com/voltrevo/bristol-circuit?rev=2a8b001#2a8b001a80ffc0370c641ccc0ed5bf5c04aea9cc"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
 name = "browserslist-rs"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1474,8 +1494,9 @@ dependencies = [
 [[package]]
 name = "summon_compiler"
 version = "0.1.0"
-source = "git+https://github.com/voltrevo/summon?rev=7e2abb8#7e2abb8996edb69b91739c5d45715bdd31440278"
+source = "git+https://github.com/voltrevo/summon?rev=59bc524#59bc524bc9ff8c2f6e05270ac5102ffe70cff19f"
 dependencies = [
+ "bristol-circuit",
  "num-bigint",
  "num-traits",
  "serde",
@@ -1489,6 +1510,7 @@ dependencies = [
 name = "summon_ts_wasm"
 version = "0.1.0"
 dependencies = [
+ "boolify",
  "console_error_panic_hook",
  "getrandom",
  "js-sys",

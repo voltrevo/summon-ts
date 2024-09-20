@@ -37,4 +37,39 @@ describe('summon', () => {
       },
     });
   });
+
+  it('compiles xor', () => {
+    const circuit = summon.compileBoolean(
+      '/src/main.ts',
+      8,
+      {
+        '/src/main.ts': `
+          export default function main(a: number, b: number) {
+            return (a ^ b) & 1;
+          }
+        `
+      },
+    );
+  
+    expect(circuit).to.deep.equal({
+      bristol: blockTrim(`
+        2 18
+        2 8 8
+        1 8
+
+        2 1 7 15 17 XOR
+        2 1 0 0 16 XOR
+      `),
+      info: {
+        input_name_to_wire_index: {
+          a: 0,
+          b: 8,
+        },
+        constants: {},
+        output_name_to_wire_index: {
+          main: 16,
+        },
+      },
+    });
+  });
 });

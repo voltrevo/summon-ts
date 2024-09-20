@@ -31,5 +31,5 @@ export default function blockTrim(text: string) {
 
   return lines.map(
     line => line.slice(minIndent),
-  ).join('\n');
+  ).join('\n') + '\n';
 }

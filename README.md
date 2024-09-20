@@ -15,6 +15,8 @@ import * as summon from 'summon-ts';
 async function main() {
   await summon.init();
 
+  // for boolean circuits: summon.compileBoolean('/src/main.ts', 8, { ... })
+  // (replace 8 with your desired uint precision)
   const circuit = summon.compile('/src/main.ts', {
     // In a real project you should be able to include these as regular files,
     // but how those files find their way into this format depends on your build

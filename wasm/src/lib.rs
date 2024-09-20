@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use boolify::boolify;
 use serde::Serialize;
 use serde_wasm_bindgen::Serializer;
 use wasm_bindgen::{prelude::*, JsError};
@@ -14,6 +15,23 @@ pub fn init_ext() {
 
 #[wasm_bindgen]
 pub fn compile(path: &str, files: JsValue) -> Result<JsValue, JsError> {
+    compile_impl(path, None, files)
+}
+
+#[wasm_bindgen]
+pub fn compile_boolean(
+    path: &str,
+    boolify_width: usize,
+    files: JsValue,
+) -> Result<JsValue, JsError> {
+    compile_impl(path, Some(boolify_width), files)
+}
+
+pub fn compile_impl(
+    path: &str,
+    boolify_width: Option<usize>,
+    files: JsValue,
+) -> Result<JsValue, JsError> {
     let files = convert_jsvalue_to_hashmap(files)?;
 
     let compile_result = summon_compile(
@@ -23,7 +41,13 @@ pub fn compile(path: &str, files: JsValue) -> Result<JsValue, JsError> {
 
     match compile_result {
         Ok(compile_ok) => {
-            Ok(compile_ok.circuit.to_bristol().serialize(
+            let mut circuit = compile_ok.circuit.to_bristol();
+
+            if let Some(boolify_width) = boolify_width {
+                circuit = boolify(&circuit, boolify_width);
+            }
+
+            Ok(circuit.to_raw()?.serialize(
                 &Serializer::new().serialize_maps_as_objects(true)
             )?)
         },

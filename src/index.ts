@@ -11,6 +11,14 @@ export function compile(
   return getWasmLib().compile(path, files);
 }
 
+export function compileBoolean(
+  path: string,
+  boolifyWidth: number,
+  files: Record<string, string>,
+): Circuit {
+  return getWasmLib().compile_boolean(path, boolifyWidth, files);
+}
+
 // TODO: Define this in shared lib
 type Circuit = {
   bristol: string;
