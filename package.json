@@ -1,6 +1,6 @@
 {
   "name": "summon-ts",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "TypeScript build of the Summon compiler (via wasm).",
   "main": "dist/src/index.js",
   "scripts": {
