@@ -21,6 +21,7 @@ async function main() {
     // In a real project you should be able to include these as regular files,
     // but how those files find their way into this format depends on your build
     // tool.
+    // Example: https://github.com/voltrevo/mpc-hello/blob/c1c8092/src/getCircuitFiles.ts
 
     '/src/main.ts': `
       export default function main(a: number, b: number) {
@@ -50,6 +51,7 @@ required.
 
 Test with `npm test`.
 
-## Example Project
+## Example Projects
 
-TODO
+- [MPC Hello](https://voltrevo.github.io/mpc-hello/)
+- [2PC is for Lovers](https://voltrevo.github.io/2pc-is-for-lovers/)
