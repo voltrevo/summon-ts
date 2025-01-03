@@ -1,4 +1,4 @@
-import { getWasmLib, initWasmLib } from './wasmLib';
+import { getWasmLib, initWasmLib } from './wasmLib.js';
 
 export async function init() {
   await initWasmLib();
