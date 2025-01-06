@@ -23,26 +23,47 @@ jobs:
         with:
           node-version: '22'
 
-      # Step 3: Install Rust toolchain
+      # Step 3: Cache npm dependencies
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # Step 4: Install npm dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Step 5: Install Rust toolchain
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
 
-      # Step 4: Install wasm-pack
+      # Step 6: Cache Cargo artifacts
+      - name: Cache Cargo
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      # Step 7: Install wasm-pack
       - name: Install wasm-pack
         run: |
           curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-      # Step 5: Install npm dependencies
-      - name: Install dependencies
-        run: npm install
-
-      # Step 6: Build the project
+      # Step 8: Build the project
       - name: Build project
         run: npm run build
 
-      # Step 7: Run tests
+      # Step 9: Run tests
       - name: Run tests
         run: npm test
