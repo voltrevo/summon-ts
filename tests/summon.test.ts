@@ -46,7 +46,7 @@ describe('summon', () => {
   // +      "b": 8
   //   }
   // https://github.com/voltrevo/summon-ts/actions/runs/12627100358/job/35181187804?pr=2#step:10:35
-  it.skip('compiles xor', () => {
+  it('compiles xor', () => {
     const circuit = summon.compileBoolean(
       '/src/main.ts',
       8,
