@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { readFileSync } from 'fs';
 
 import * as summon from '../src/index';
 import blockTrim from './helpers/blockTrim';
@@ -9,7 +10,7 @@ describe('summon', () => {
   });
 
   it('compiles a circuit from the file system', () => {
-    const circuit = summon.compile('./circuit/main.ts');
+    const circuit = summon.compile('./circuit/main.ts', (filePath) => readFileSync(filePath, 'utf8'));
 
     const expectedCircuit = summon.compile('/src/main.ts', {
       '/src/main.ts': `
