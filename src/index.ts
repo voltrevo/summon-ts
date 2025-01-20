@@ -1,4 +1,4 @@
-import { getWasmLib, initWasmLib } from './wasmLib.js';
+import {getWasmLib, initWasmLib} from './wasmLib.js';
 
 export async function init() {
   await initWasmLib();
@@ -6,17 +6,33 @@ export async function init() {
 
 export function compile(
   path: string,
-  files: Record<string, string>,
+  filesOrFileReader: Record<string, string> | ((path: string) => string),
 ): Circuit {
-  return getWasmLib().compile(path, files);
+  if (typeof filesOrFileReader === 'function') {
+    return getWasmLib().compile_impl_from_file(
+      path,
+      undefined,
+      filesOrFileReader
+    );
+  }
+
+  return getWasmLib().compile_impl_from_object(path, undefined, filesOrFileReader);
 }
 
 export function compileBoolean(
   path: string,
   boolifyWidth: number,
-  files: Record<string, string>,
+  filesOrFileReader: Record<string, string> | ((path: string) => string),
 ): Circuit {
-  return getWasmLib().compile_boolean(path, boolifyWidth, files);
+  if (typeof filesOrFileReader === 'function') {
+    return getWasmLib().compile_impl_from_file(
+      path,
+      boolifyWidth,
+      filesOrFileReader
+    );
+  }
+
+  return getWasmLib().compile_impl_from_object(path, boolifyWidth, filesOrFileReader);
 }
 
 // TODO: Define this in shared lib

@@ -43,6 +43,15 @@ async function main() {
 main().catch(console.error);
 ```
 
+When providing `files` to the API, you can also substitute a file reader `(filePath: string) => string`. Like this:
+
+```ts
+summon.compile(
+  '/full/path/to/main.ts',
+  (filePath) => fs.readFileSync(filePath),
+);
+```
+
 ## Development
 
 Build with `npm run build`. This will compile the wasm subproject and also

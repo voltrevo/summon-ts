@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { readFileSync } from 'fs';
 
 import * as summon from '../src/index';
 import blockTrim from './helpers/blockTrim';
@@ -7,6 +8,27 @@ describe('summon', () => {
   before(async () => {
     await summon.init();
   });
+
+  it('compiles a circuit from the file system', () => {
+    const circuit = summon.compile('./circuit/main.ts', (filePath) => readFileSync(filePath, 'utf8'));
+
+    const expectedCircuit = summon.compile('/src/main.ts', {
+      '/src/main.ts': `
+        import isLarger from './isLarger.ts';
+
+        export default function main(a: number, b: number) {
+          return isLarger(a, b) ? a : b;
+        }
+      `,
+      '/src/isLarger.ts': `
+        export default function isLarger(a: number, b: number): boolean {
+          return a > b;
+        }
+      `
+    });
+
+    expect(circuit).to.be.deep.equal(expectedCircuit)
+  })
 
   it('compiles addition', () => {
     const circuit = summon.compile('/src/main.ts', {
