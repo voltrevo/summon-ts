@@ -6,7 +6,7 @@ use js_sys::{Array, Function, Object, Reflect};
 use serde::Serialize;
 use serde_wasm_bindgen::Serializer;
 use summon_compiler::{
-    compile as summon_compile, CompileErr, CompileOk, DiagnosticLevel, ResolvedPath,
+    compile as summon_compile, CompileErr, CompileOk, Diagnostic, DiagnosticLevel, ResolvedPath,
 };
 use wasm_bindgen::{prelude::*, JsError};
 
@@ -69,9 +69,39 @@ pub fn check_result(
                 circuit = boolify(&circuit, boolify_width);
             }
 
-            Ok(circuit
+            // Convert the circuit into a raw form and then serialize it to a JS-friendly format.
+            let circuit_js = circuit
                 .to_raw()?
-                .serialize(&Serializer::new().serialize_maps_as_objects(true))?)
+                .serialize(&Serializer::new().serialize_maps_as_objects(true))?;
+
+            // Convert diagnostics keys to strings and serialize it to a JS-friendly format.
+            let diagnostics_map: HashMap<String, Vec<Diagnostic>> = compile_ok
+                .diagnostics
+                .into_iter()
+                .map(|(key, value)| (key.to_string(), value))
+                .collect();
+            let diagnostics_js =
+                diagnostics_map.serialize(&Serializer::new().serialize_maps_as_objects(true))?;
+
+            // Return both circuit and diagnostics as a JS value.
+            let compile_ok_js = js_sys::Object::new();
+
+            Reflect::set(&compile_ok_js, &JsValue::from_str("circuit"), &circuit_js).map_err(|e| {
+                JsError::new(&format!(
+                    "Error setting property: {}",
+                    e.as_string().unwrap_or_default()
+                ))
+            })?;
+            Reflect::set(&compile_ok_js, &JsValue::from_str("diagnostics"), &diagnostics_js).map_err(
+                |e| {
+                    JsError::new(&format!(
+                        "Error setting property: {}",
+                        e.as_string().unwrap_or_default()
+                    ))
+                },
+            )?;
+
+            Ok(JsValue::from(compile_ok_js))
         }
         Err(e) => {
             return Err('b: {
