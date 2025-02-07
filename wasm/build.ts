@@ -24,8 +24,8 @@ async function main() {
   // nextjs tries to statically resolve this and fails, but we don't use it
   await replaceInFile(
     './pkg/summon_ts_wasm.js',
-    `input = new URL('summon_ts_wasm_bg.wasm', import.meta.url);`,
-    `throw new Error('not supported')`,
+    "input = new URL('summon_ts_wasm_bg.wasm', import.meta.url);",
+    "throw new Error('not supported')",
   );
 
   await fs.writeFile('./pkg/summon_ts_wasm_base64.js', src);
@@ -38,12 +38,14 @@ async function shell(program: string, args: string[]) {
 
   await new Promise<void>((resolve, reject) => {
     child.on('exit', code => {
-      if (code !== 0) {
-        reject(new Error(
-          `Failed shell command (code=${code}): ${[program, ...args].join(' ')}`
-        ));
-      } else {
+      if (code === 0) {
         resolve();
+      } else {
+        reject(
+          new Error(
+            `Failed shell command (code=${code}): ${[program, ...args].join(' ')}`,
+          ),
+        );
       }
     });
   });

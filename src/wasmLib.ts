@@ -1,22 +1,24 @@
 import * as bindgen from '../srcWasm/summon_ts_wasm.js';
 
 function base64ToUint8Array(base64: string) {
-  var binaryString = atob(base64);
-  var len = binaryString.length;
-  var bytes = new Uint8Array(len);
-  for (var i = 0; i < len; i++) {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+
+  for (let i = 0; i < len; i++) {
     bytes[i] = binaryString.charCodeAt(i);
   }
+
   return bytes;
 }
 
-let promise: Promise<typeof bindgen> | undefined = undefined;
-let lib: typeof bindgen | undefined = undefined;
+let promise: Promise<typeof bindgen> | undefined;
+let lib: typeof bindgen | undefined;
 
 export function initWasmLib() {
   promise ??= (async () => {
     const { default: wasmBase64 } = await import(
-      '../srcWasm/summon_ts_wasm_base64.js',
+      '../srcWasm/summon_ts_wasm_base64.js'
     );
 
     bindgen.initSync(base64ToUint8Array(wasmBase64));

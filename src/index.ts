@@ -1,4 +1,4 @@
-import {getWasmLib, initWasmLib} from './wasmLib.js';
+import { getWasmLib, initWasmLib } from './wasmLib.js';
 
 export async function init() {
   await initWasmLib();
@@ -12,11 +12,15 @@ export function compile(
     return getWasmLib().compile_impl_from_file(
       path,
       undefined,
-      filesOrFileReader
+      filesOrFileReader,
     );
   }
 
-  return getWasmLib().compile_impl_from_object(path, undefined, filesOrFileReader);
+  return getWasmLib().compile_impl_from_object(
+    path,
+    undefined,
+    filesOrFileReader,
+  );
 }
 
 export function compileBoolean(
@@ -28,11 +32,15 @@ export function compileBoolean(
     return getWasmLib().compile_impl_from_file(
       path,
       boolifyWidth,
-      filesOrFileReader
+      filesOrFileReader,
     );
   }
 
-  return getWasmLib().compile_impl_from_object(path, boolifyWidth, filesOrFileReader);
+  return getWasmLib().compile_impl_from_object(
+    path,
+    boolifyWidth,
+    filesOrFileReader,
+  );
 }
 
 // TODO: Define this in shared lib
