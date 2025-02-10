@@ -46,10 +46,7 @@ main().catch(console.error);
 When providing `files` to the API, you can also substitute a file reader `(filePath: string) => string`. Like this:
 
 ```ts
-summon.compile(
-  '/full/path/to/main.ts',
-  (filePath) => fs.readFileSync(filePath),
-);
+summon.compile('/full/path/to/main.ts', filePath => fs.readFileSync(filePath));
 ```
 
 ## Development

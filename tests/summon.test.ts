@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import { expect } from 'chai';
 import { readFileSync } from 'fs';
 
@@ -10,7 +12,9 @@ describe('summon', () => {
   });
 
   it('compiles a circuit from the file system', () => {
-    const circuit = summon.compile('./circuit/main.ts', (filePath) => readFileSync(filePath, 'utf8'));
+    const circuit = summon.compile('./circuit/main.ts', filePath =>
+      readFileSync(filePath, 'utf8'),
+    );
 
     const expectedCircuit = summon.compile('/src/main.ts', {
       '/src/main.ts': `
@@ -24,11 +28,11 @@ describe('summon', () => {
         export default function isLarger(a: number, b: number): boolean {
           return a > b;
         }
-      `
+      `,
     });
 
-    expect(circuit).to.be.deep.equal(expectedCircuit)
-  })
+    expect(circuit).to.be.deep.equal(expectedCircuit);
+  });
 
   it('compiles addition', () => {
     const circuit = summon.compile('/src/main.ts', {
@@ -36,9 +40,9 @@ describe('summon', () => {
         export default function main(a: number, b: number) {
           return a + b;
         }
-      `
+      `,
     });
-  
+
     expect(circuit).to.deep.equal({
       bristol: blockTrim(`
         1 3
@@ -69,18 +73,14 @@ describe('summon', () => {
   //   }
   // https://github.com/voltrevo/summon-ts/actions/runs/12627100358/job/35181187804?pr=2#step:10:35
   it('compiles xor', () => {
-    const circuit = summon.compileBoolean(
-      '/src/main.ts',
-      8,
-      {
-        '/src/main.ts': `
+    const circuit = summon.compileBoolean('/src/main.ts', 8, {
+      '/src/main.ts': `
           export default function main(a: number, b: number) {
             return (a ^ b) & 1;
           }
-        `
-      },
-    );
-  
+        `,
+    });
+
     expect(circuit).to.deep.equal({
       bristol: blockTrim(`
         8 24
