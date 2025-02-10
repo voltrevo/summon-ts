@@ -7,7 +7,7 @@ export async function init() {
 export function compile(
   path: string,
   filesOrFileReader: Record<string, string> | ((path: string) => string),
-): Circuit {
+): CompileOk {
   if (typeof filesOrFileReader === 'function') {
     return getWasmLib().compile_impl_from_file(
       path,
@@ -27,7 +27,7 @@ export function compileBoolean(
   path: string,
   boolifyWidth: number,
   filesOrFileReader: Record<string, string> | ((path: string) => string),
-): Circuit {
+): CompileOk {
   if (typeof filesOrFileReader === 'function') {
     return getWasmLib().compile_impl_from_file(
       path,
@@ -43,7 +43,21 @@ export function compileBoolean(
   );
 }
 
-// TODO: Define this in shared lib
+// TODO: Define these types in shared lib.
+
+type Diagnostics = Record<
+  string,
+  {
+    level: string;
+    message: string;
+    span: {
+      start: number;
+      end: number;
+      ctxt: number;
+    };
+  }[]
+>;
+
 type Circuit = {
   bristol: string;
   info: {
@@ -51,4 +65,9 @@ type Circuit = {
     constants: Record<string, { value: string; wire_index: number }>;
     output_name_to_wire_index: Record<string, number>;
   };
+};
+
+type CompileOk = {
+  circuit: Circuit;
+  diagnostics: Diagnostics;
 };

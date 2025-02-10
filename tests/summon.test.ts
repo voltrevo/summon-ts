@@ -12,11 +12,11 @@ describe('summon', () => {
   });
 
   it('compiles a circuit from the file system', () => {
-    const circuit = summon.compile('./circuit/main.ts', filePath =>
+    const { circuit } = summon.compile('./circuit/main.ts', filePath =>
       readFileSync(filePath, 'utf8'),
     );
 
-    const expectedCircuit = summon.compile('/src/main.ts', {
+    const { circuit: expectedCircuit } = summon.compile('/src/main.ts', {
       '/src/main.ts': `
         import isLarger from './isLarger.ts';
 
@@ -34,8 +34,28 @@ describe('summon', () => {
     expect(circuit).to.be.deep.equal(expectedCircuit);
   });
 
+  it('emits compilation errors ', () => {
+    const { diagnostics } = summon.compile('/src/main.ts', {
+      '/src/main.ts': `
+        export default function main(a: number, b: number) {
+          const c = 0;
+
+          c = b;
+
+          return a + c;
+        }
+      `,
+    });
+
+    expect(diagnostics['/src/main.ts']).to.have.length(1);
+    expect(diagnostics['/src/main.ts'][0].level).to.be.equal('Error');
+    expect(diagnostics['/src/main.ts'][0].message).to.be.equal(
+      'Cannot mutate const c',
+    );
+  });
+
   it('compiles addition', () => {
-    const circuit = summon.compile('/src/main.ts', {
+    const { circuit } = summon.compile('/src/main.ts', {
       '/src/main.ts': `
         export default function main(a: number, b: number) {
           return a + b;
@@ -73,7 +93,7 @@ describe('summon', () => {
   //   }
   // https://github.com/voltrevo/summon-ts/actions/runs/12627100358/job/35181187804?pr=2#step:10:35
   it('compiles xor', () => {
-    const circuit = summon.compileBoolean('/src/main.ts', 8, {
+    const { circuit } = summon.compileBoolean('/src/main.ts', 8, {
       '/src/main.ts': `
           export default function main(a: number, b: number) {
             return (a ^ b) & 1;
