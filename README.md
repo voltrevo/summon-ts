@@ -36,7 +36,8 @@ async function main() {
   //   info: { ... },
   // }
 
-  // May include lint, debug or error diagnostics.
+  // May include non-error diagnostics.
+  // (If there are errors, summon.compile will throw instead.)
   console.log(diagnostics);
   // { './circuit/main.ts': [] }
 
@@ -44,7 +45,9 @@ async function main() {
   // https://github.com/voltrevo/mpc-framework
 }
 
-// Errors also include the diagnostics and the circuit if it has been compiled.
+// When summon.compile throws, the error message will be the first error
+// diagnostic. The remaining diagnostics are also available as error.diagnostics
+// and the compiled circuit might also be available as .circuit.
 main().catch(console.error);
 ```
 
