@@ -5,6 +5,7 @@ import { readFileSync } from 'fs';
 
 import * as summon from '../src/index';
 import blockTrim from './helpers/blockTrim';
+import CompileError from '../src/compileError';
 
 describe('summon', () => {
   before(async () => {
@@ -12,9 +13,12 @@ describe('summon', () => {
   });
 
   it('compiles a circuit from the file system', () => {
-    const { circuit } = summon.compile('./circuit/main.ts', filePath =>
-      readFileSync(filePath, 'utf8'),
+    const { circuit, diagnostics } = summon.compile(
+      './circuit/main.ts',
+      filePath => readFileSync(filePath, 'utf8'),
     );
+
+    console.log(diagnostics);
 
     const { circuit: expectedCircuit } = summon.compile('/src/main.ts', {
       '/src/main.ts': `
@@ -35,8 +39,9 @@ describe('summon', () => {
   });
 
   it('emits compilation errors ', () => {
-    const { diagnostics } = summon.compile('/src/main.ts', {
-      '/src/main.ts': `
+    const fun = () =>
+      summon.compile('/src/main.ts', {
+        '/src/main.ts': `
         export default function main(a: number, b: number) {
           const c = 0;
 
@@ -45,13 +50,20 @@ describe('summon', () => {
           return a + c;
         }
       `,
-    });
+      });
 
-    expect(diagnostics['/src/main.ts']).to.have.length(1);
-    expect(diagnostics['/src/main.ts'][0].level).to.be.equal('Error');
-    expect(diagnostics['/src/main.ts'][0].message).to.be.equal(
-      'Cannot mutate const c',
-    );
+    expect(fun)
+      .to.throw(CompileError)
+      .and.satisfy(({ message, circuit, diagnostics }: CompileError) => {
+        expect(message).to.equal('Cannot mutate const c');
+
+        expect(circuit).to.have.property('bristol');
+
+        expect(diagnostics['/src/main.ts']).to.have.length(1);
+        expect(diagnostics['/src/main.ts'][0].level).to.be.equal('Error');
+
+        return true;
+      });
   });
 
   it('compiles addition', () => {
