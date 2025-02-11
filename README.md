@@ -17,7 +17,7 @@ async function main() {
 
   // for boolean circuits: summon.compileBoolean('/src/main.ts', 8, { ... })
   // (replace 8 with your desired uint precision)
-  const { circuit } = summon.compile('/src/main.ts', {
+  const { circuit, diagnostics } = summon.compile('/src/main.ts', {
     // In a real project you should be able to include these as regular files,
     // but how those files find their way into this format depends on your build
     // tool.
@@ -36,10 +36,18 @@ async function main() {
   //   info: { ... },
   // }
 
+  // May include non-error diagnostics.
+  // (If there are errors, summon.compile will throw instead.)
+  console.log(diagnostics);
+  // { './circuit/main.ts': [] }
+
   // See mpc-framework for doing MPC with your circuits.
   // https://github.com/voltrevo/mpc-framework
 }
 
+// When summon.compile throws, the error message will be the first error
+// diagnostic. The remaining diagnostics are also available as error.diagnostics
+// and the compiled circuit might also be available as .circuit.
 main().catch(console.error);
 ```
 

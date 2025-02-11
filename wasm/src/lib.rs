@@ -6,7 +6,7 @@ use js_sys::{Array, Function, Object, Reflect};
 use serde::Serialize;
 use serde_wasm_bindgen::Serializer;
 use summon_compiler::{
-    compile as summon_compile, CompileErr, CompileOk, Diagnostic, DiagnosticLevel, ResolvedPath,
+    compile as summon_compile, CompileErr, CompileOk, Diagnostic, ResolvedPath,
 };
 use wasm_bindgen::{prelude::*, JsError};
 
@@ -61,68 +61,56 @@ pub fn check_result(
     compile_result: Result<CompileOk, CompileErr>,
     boolify_width: Option<usize>,
 ) -> Result<JsValue, JsError> {
-    match compile_result {
-        Ok(compile_ok) => {
-            let mut circuit = compile_ok.circuit.to_bristol();
+    let (circuit, diagnostics) = match compile_result {
+        Ok(ok) => (Some(ok.circuit), ok.diagnostics),
+        Err(err) => (err.circuit, err.diagnostics),
+    };
 
-            if let Some(boolify_width) = boolify_width {
-                circuit = boolify(&circuit, boolify_width);
-            }
+    // Convert diagnostics keys to strings and serialize it to a JS-friendly format.
+    let diagnostics_map: HashMap<String, Vec<Diagnostic>> = diagnostics
+        .into_iter()
+        .map(|(key, value)| (key.to_string(), value))
+        .collect();
+    let diagnostics_js =
+        diagnostics_map.serialize(&Serializer::new().serialize_maps_as_objects(true))?;
 
-            // Convert the circuit into a raw form and then serialize it to a JS-friendly format.
-            let circuit_js = circuit
-                .to_raw()?
-                .serialize(&Serializer::new().serialize_maps_as_objects(true))?;
+    let mut circuit_js = JsValue::from(Object::new());
 
-            // Convert diagnostics keys to strings and serialize it to a JS-friendly format.
-            let diagnostics_map: HashMap<String, Vec<Diagnostic>> = compile_ok
-                .diagnostics
-                .into_iter()
-                .map(|(key, value)| (key.to_string(), value))
-                .collect();
-            let diagnostics_js =
-                diagnostics_map.serialize(&Serializer::new().serialize_maps_as_objects(true))?;
+    if let Some(circuit) = circuit {
+        let mut bristol_circuit = circuit.to_bristol();
 
-            // Return both circuit and diagnostics as a JS value.
-            let compile_ok_js = js_sys::Object::new();
-
-            Reflect::set(&compile_ok_js, &JsValue::from_str("circuit"), &circuit_js).map_err(|e| {
-                JsError::new(&format!(
-                    "Error setting property: {}",
-                    e.as_string().unwrap_or_default()
-                ))
-            })?;
-            Reflect::set(&compile_ok_js, &JsValue::from_str("diagnostics"), &diagnostics_js).map_err(
-                |e| {
-                    JsError::new(&format!(
-                        "Error setting property: {}",
-                        e.as_string().unwrap_or_default()
-                    ))
-                },
-            )?;
-
-            Ok(JsValue::from(compile_ok_js))
+        if let Some(boolify_width) = boolify_width {
+            bristol_circuit = boolify(&bristol_circuit, boolify_width);
         }
-        Err(e) => {
-            return Err('b: {
-                for (_, diagnostics) in e.diagnostics {
-                    for diagnostic in diagnostics {
-                        match diagnostic.level {
-                            DiagnosticLevel::Error | DiagnosticLevel::InternalError => {}
-                            DiagnosticLevel::CompilerDebug | DiagnosticLevel::Lint => continue,
-                        };
 
-                        break 'b JsError::new(&format!(
-                            "{}: {}",
-                            diagnostic.level, diagnostic.message,
-                        ));
-                    }
-                }
-
-                JsError::new("InternalError: Could not find error")
-            })
-        }
+        // Convert the circuit into a raw form and then serialize it to a JS-friendly format.
+        circuit_js = bristol_circuit
+            .to_raw()?
+            .serialize(&Serializer::new().serialize_maps_as_objects(true))?;
     }
+
+    // Return both circuit and diagnostics as a JS value.
+    let compile_ok_js = js_sys::Object::new();
+
+    Reflect::set(&compile_ok_js, &JsValue::from_str("circuit"), &circuit_js).map_err(|e| {
+        JsError::new(&format!(
+            "Error setting property: {}",
+            e.as_string().unwrap_or_default()
+        ))
+    })?;
+    Reflect::set(
+        &compile_ok_js,
+        &JsValue::from_str("diagnostics"),
+        &diagnostics_js,
+    )
+    .map_err(|e| {
+        JsError::new(&format!(
+            "Error setting property: {}",
+            e.as_string().unwrap_or_default()
+        ))
+    })?;
+
+    Ok(JsValue::from(compile_ok_js))
 }
 
 pub fn convert_jsvalue_to_hashmap(value: JsValue) -> Result<HashMap<String, String>, JsError> {
