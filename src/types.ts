@@ -29,6 +29,6 @@ export type Circuit = {
 };
 
 export type CompileResult = {
-  circuit?: Circuit;
+  circuit: Circuit;
   diagnostics: Diagnostics;
 };
