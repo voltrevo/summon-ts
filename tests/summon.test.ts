@@ -18,8 +18,6 @@ describe('summon', () => {
       filePath => readFileSync(filePath, 'utf8'),
     );
 
-    console.log(diagnostics);
-
     const { circuit: expectedCircuit } = summon.compile('/src/main.ts', {
       '/src/main.ts': `
         import isLarger from './isLarger.ts';
@@ -64,6 +62,27 @@ describe('summon', () => {
 
         return true;
       });
+  });
+
+  it('non-error diagnostic is provided without throwing', () => {
+    const fun = () =>
+      summon.compile('/src/main.ts', {
+        '/src/main.ts': `
+        export default function main(a: number, b: number) {
+          let c = 0; // lint: c is implicitly const due to capture
+          const f = () => c;
+
+          return a + c;
+        }
+      `,
+      });
+
+    const { circuit, diagnostics } = fun();
+
+    expect(diagnostics['/src/main.ts']).to.have.length(1);
+    expect(diagnostics['/src/main.ts'][0].level).to.be.equal('Lint');
+
+    expect(circuit).to.have.property('bristol');
   });
 
   it('compiles addition', () => {
