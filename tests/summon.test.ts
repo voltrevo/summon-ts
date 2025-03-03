@@ -115,14 +115,6 @@ describe('summon', () => {
     });
   });
 
-  // FIXME: on linux / gh actions:
-  //   "input_name_to_wire_index": {
-  // -      "a": 8
-  // -      "b": 0
-  // +      "a": 0
-  // +      "b": 8
-  //   }
-  // https://github.com/voltrevo/summon-ts/actions/runs/12627100358/job/35181187804?pr=2#step:10:35
   it('compiles xor', () => {
     const { circuit } = summon.compileBoolean('/src/main.ts', 8, {
       '/src/main.ts': `
@@ -138,14 +130,14 @@ describe('summon', () => {
         2 8 8
         1 8
 
-        2 1 7 15 23 XOR
-        2 1 0 0 16 XOR
-        1 1 16 22 COPY
-        1 1 16 21 COPY
-        1 1 16 20 COPY
-        1 1 16 19 COPY
-        1 1 16 18 COPY
-        1 1 16 17 COPY
+        2 1 0 8 16 XOR
+        2 1 0 0 17 XOR
+        1 1 17 18 COPY
+        1 1 17 19 COPY
+        1 1 17 20 COPY
+        1 1 17 21 COPY
+        1 1 17 22 COPY
+        1 1 17 23 COPY
       `),
       info: {
         input_name_to_wire_index: {
