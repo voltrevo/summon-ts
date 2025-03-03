@@ -166,7 +166,7 @@ dependencies = [
 [[package]]
 name = "boolify"
 version = "0.1.0"
-source = "git+https://github.com/voltrevo/boolify?rev=f68ee3a#f68ee3a66e8c762dabda5be4bbe1f328d2b8fdd8"
+source = "git+https://github.com/voltrevo/boolify?rev=cec0efa#cec0efa7ad938da96078e9e2a65a741b1417918a"
 dependencies = [
  "bristol-circuit",
  "serde",
@@ -1418,7 +1418,7 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 [[package]]
 name = "storage"
 version = "0.1.0"
-source = "git+https://github.com/voltrevo/ValueScript?rev=ae82029#ae82029f0d5b147c057b02acd7076d38446e88aa"
+source = "git+https://github.com/voltrevo/summon?rev=dd3833d#dd3833da09ddb8acd32d9d0441d8e486576a4680"
 dependencies = [
  "bincode",
  "num-bigint",
@@ -1492,18 +1492,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "summon_common"
+version = "0.1.0"
+source = "git+https://github.com/voltrevo/summon?rev=dd3833d#dd3833da09ddb8acd32d9d0441d8e486576a4680"
+dependencies = [
+ "strum",
+ "strum_macros",
+]
+
+[[package]]
 name = "summon_compiler"
 version = "0.1.0"
-source = "git+https://github.com/voltrevo/summon?rev=b6d5744#b6d5744e6b35639a91044607828537f44196fadf"
+source = "git+https://github.com/voltrevo/summon?rev=dd3833d#dd3833da09ddb8acd32d9d0441d8e486576a4680"
 dependencies = [
  "bristol-circuit",
  "num-bigint",
  "num-traits",
+ "queues",
  "serde",
  "serde_json",
- "valuescript_common",
- "valuescript_compiler",
- "valuescript_vm",
+ "summon_common",
+ "summon_vm",
+ "swc",
+ "swc_atoms",
+ "swc_common",
+ "swc_ecma_ast",
+ "swc_ecma_parser",
+ "tiny-keccak",
 ]
 
 [[package]]
@@ -1520,6 +1535,20 @@ dependencies = [
  "summon_compiler",
  "wasm-bindgen",
  "web-sys",
+]
+
+[[package]]
+name = "summon_vm"
+version = "0.1.0"
+source = "git+https://github.com/voltrevo/summon?rev=dd3833d#dd3833da09ddb8acd32d9d0441d8e486576a4680"
+dependencies = [
+ "bristol-circuit",
+ "num-bigint",
+ "num-derive",
+ "num-traits",
+ "serde_json",
+ "storage",
+ "summon_common",
 ]
 
 [[package]]
@@ -2375,48 +2404,6 @@ dependencies = [
  "idna",
  "matches",
  "percent-encoding",
-]
-
-[[package]]
-name = "valuescript_common"
-version = "0.1.0"
-source = "git+https://github.com/voltrevo/ValueScript?rev=ae82029#ae82029f0d5b147c057b02acd7076d38446e88aa"
-dependencies = [
- "strum",
- "strum_macros",
-]
-
-[[package]]
-name = "valuescript_compiler"
-version = "0.1.0"
-source = "git+https://github.com/voltrevo/ValueScript?rev=ae82029#ae82029f0d5b147c057b02acd7076d38446e88aa"
-dependencies = [
- "num-bigint",
- "num-traits",
- "queues",
- "serde",
- "serde_json",
- "swc",
- "swc_atoms",
- "swc_common",
- "swc_ecma_ast",
- "swc_ecma_parser",
- "tiny-keccak",
- "valuescript_common",
- "valuescript_vm",
-]
-
-[[package]]
-name = "valuescript_vm"
-version = "0.1.0"
-source = "git+https://github.com/voltrevo/ValueScript?rev=ae82029#ae82029f0d5b147c057b02acd7076d38446e88aa"
-dependencies = [
- "num-bigint",
- "num-derive",
- "num-traits",
- "serde_json",
- "storage",
- "valuescript_common",
 ]
 
 [[package]]
