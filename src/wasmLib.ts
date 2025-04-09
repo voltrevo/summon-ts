@@ -21,7 +21,7 @@ export function initWasmLib() {
       '../srcWasm/summon_ts_wasm_base64.js'
     );
 
-    bindgen.initSync(base64ToUint8Array(wasmBase64));
+    bindgen.initSync({ module: base64ToUint8Array(wasmBase64) });
     bindgen.init_ext();
     lib = bindgen;
 
