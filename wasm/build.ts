@@ -24,7 +24,7 @@ async function main() {
   // nextjs tries to statically resolve this and fails, but we don't use it
   await replaceInFile(
     './pkg/summon_ts_wasm.js',
-    "input = new URL('summon_ts_wasm_bg.wasm', import.meta.url);",
+    "module_or_path = new URL('summon_ts_wasm_bg.wasm', import.meta.url);",
     "throw new Error('not supported')",
   );
 
