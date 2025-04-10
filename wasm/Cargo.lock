@@ -157,7 +157,7 @@ dependencies = [
 [[package]]
 name = "boolify"
 version = "0.1.0"
-source = "git+https://github.com/voltrevo/boolify?rev=e5d680d#e5d680d563bbf60195c14702fbb54abe1cc3f03f"
+source = "git+https://github.com/voltrevo/boolify?rev=09a5636#09a5636fffef8025eaf4f847dacb16e886853d6a"
 dependencies = [
  "bristol-circuit",
  "serde",
@@ -1370,7 +1370,7 @@ dependencies = [
 [[package]]
 name = "summon_common"
 version = "0.1.0"
-source = "git+https://github.com/voltrevo/summon?rev=c629938#c6299384fe75b1583e58d633ec6f7c459a7259c3"
+source = "git+https://github.com/voltrevo/summon?rev=a1dfc1c#a1dfc1cb38010a88043172a72bcbeadc8b494027"
 dependencies = [
  "strum",
  "strum_macros",
@@ -1379,7 +1379,7 @@ dependencies = [
 [[package]]
 name = "summon_compiler"
 version = "0.1.0"
-source = "git+https://github.com/voltrevo/summon?rev=c629938#c6299384fe75b1583e58d633ec6f7c459a7259c3"
+source = "git+https://github.com/voltrevo/summon?rev=a1dfc1c#a1dfc1cb38010a88043172a72bcbeadc8b494027"
 dependencies = [
  "bristol-circuit",
  "num-bigint",
@@ -1416,7 +1416,7 @@ dependencies = [
 [[package]]
 name = "summon_vm"
 version = "0.1.0"
-source = "git+https://github.com/voltrevo/summon?rev=c629938#c6299384fe75b1583e58d633ec6f7c459a7259c3"
+source = "git+https://github.com/voltrevo/summon?rev=a1dfc1c#a1dfc1cb38010a88043172a72bcbeadc8b494027"
 dependencies = [
  "bristol-circuit",
  "num-bigint",
