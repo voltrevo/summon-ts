@@ -1,4 +1,9 @@
-import { Circuit, CompileResult, DiagnosticLevel, Diagnostics } from './types';
+import {
+  Circuit,
+  CompileResult,
+  DiagnosticLevel,
+  Diagnostics,
+} from './types.js';
 
 /**
  * Custom error class for handling Summon compilation errors.
