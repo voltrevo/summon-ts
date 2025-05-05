@@ -22,13 +22,27 @@ export type Diagnostics = Record<string, Diagnostic[]>;
 export type Circuit = {
   bristol: string;
   info: {
-    input_name_to_wire_index: Record<string, number>;
-    constants: Record<string, { value: string; wire_index: number }>;
-    output_name_to_wire_index: Record<string, number>;
+    constants: (CircuitIOInfo & { value: unknown })[];
+    inputs: CircuitIOInfo[];
+    outputs: CircuitIOInfo[];
   };
+  mpcSettings: MpcParticipantSettings[];
+};
+
+export type CircuitIOInfo = {
+  name: string;
+  type: unknown;
+  address: number;
+  width: number;
 };
 
 export type CompileResult = {
   circuit: Circuit;
   diagnostics: Diagnostics;
+};
+
+type MpcParticipantSettings = {
+  name: string;
+  inputs: string[];
+  outputs: string[];
 };
