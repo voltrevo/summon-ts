@@ -1,7 +1,8 @@
 # summon-ts
 
-TypeScript build of the [Summon](https://github.com/voltrevo/summon) compiler
-(via wasm).
+TypeScript build of the
+[Summon](https://github.com/privacy-scaling-explorations/summon) compiler (via
+wasm).
 
 ## Usage
 
@@ -10,30 +11,40 @@ npm install summon-ts
 ```
 
 ```ts
-import * as summon from 'summon-ts';
+import * as summon from "summon-ts";
 
 async function main() {
   await summon.init();
 
-  // for boolean circuits: summon.compileBoolean('/src/main.ts', 8, { ... })
-  // (replace 8 with your desired uint precision)
-  const { circuit, diagnostics } = summon.compile('/src/main.ts', {
-    // In a real project you should be able to include these as regular files,
-    // but how those files find their way into this format depends on your build
-    // tool.
-    // Example: https://github.com/voltrevo/mpc-hello/blob/c1c8092/src/getCircuitFiles.ts
+  const { circuit, diagnostics } = summon.compile({
+    path: "/src/main.ts",
+    // for boolean circuits:
+    // boolifyWidth: 8, // (replace 8 with your desired uint precision)
+    // if your circuit uses io.inputPublic(..) then provide the values like
+    // this:
+    // publicInputs: { N: 5 },
+    files: {
+      // In a real project you should be able to include these as regular files,
+      // but how those files find their way into this format depends on your build
+      // tool.
+      // Example: https://github.com/voltrevo/mpc-hello/blob/c1c8092/src/getCircuitFiles.ts
 
-    '/src/main.ts': `
-      export default function main(a: number, b: number) {
-        return a + b;
-      }
-    `,
+      "/src/main.ts": `
+        export default (io: Summon.IO) {
+          const a = io.input('alice', 'a', summon.number());
+          const b = io.input('bob', 'b', summon.number());
+
+          io.outputPublic('res', a + b);
+        }
+      `,
+    },
   });
 
   console.log(circuit);
   // {
   //   bristol: '...',
   //   info: { ... },
+  //   mpcSettings: [...],
   // }
 
   // May include non-error diagnostics.
@@ -51,10 +62,14 @@ async function main() {
 main().catch(console.error);
 ```
 
-When providing `files` to the API, you can also substitute a file reader `(filePath: string) => string`. Like this:
+When providing files to the API, you can also provide a `readFile` function
+instead:
 
 ```ts
-summon.compile('/full/path/to/main.ts', filePath => fs.readFileSync(filePath));
+summon.compile({
+  path: "./path/to/main.ts",
+  readFile: (filePath) => fs.readFileSync(filePath),
+});
 ```
 
 ## Development
@@ -67,5 +82,5 @@ Test with `npm test`.
 
 ## Example Projects
 
-- [MPC Hello](https://voltrevo.github.io/mpc-hello/)
-- [2PC is for Lovers](https://voltrevo.github.io/2pc-is-for-lovers/)
+- [MPC Hello](https://mpc.pse.dev/apps/hello)
+- [2PC is for Lovers](https://mpc.pse.dev/apps/2pc-is-for-lovers/)
