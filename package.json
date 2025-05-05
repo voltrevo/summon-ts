@@ -26,7 +26,7 @@
   "author": "Andrew Morris",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/voltrevo/summon-ts.git"
+    "url": "git+https://github.com/privacy-scaling-explorations/summon-ts.git"
   },
   "license": "MIT",
   "devDependencies": {

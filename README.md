@@ -27,7 +27,7 @@ async function main() {
       // In a real project you should be able to include these as regular files,
       // but how those files find their way into this format depends on your build
       // tool.
-      // Example: https://github.com/voltrevo/mpc-hello/blob/c1c8092/src/getCircuitFiles.ts
+      // Example: https://github.com/privacy-scaling-explorations/mpc-hello/blob/c1c8092/src/getCircuitFiles.ts
 
       "/src/main.ts": `
         export default (io: Summon.IO) {
@@ -53,7 +53,7 @@ async function main() {
   // { './circuit/main.ts': [] }
 
   // See mpc-framework for doing MPC with your circuits.
-  // https://github.com/voltrevo/mpc-framework
+  // https://github.com/privacy-scaling-explorations/mpc-framework
 }
 
 // When summon.compile throws, the error message will be the first error
