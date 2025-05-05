@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 import { expect } from 'chai';
 import { readFileSync } from 'fs';
 
@@ -13,24 +11,30 @@ describe('summon', () => {
   });
 
   it('compiles a circuit from the file system', () => {
-    const { circuit, diagnostics } = summon.compile(
-      './circuit/main.ts',
-      filePath => readFileSync(filePath, 'utf8'),
-    );
+    const { circuit } = summon.compile({
+      path: './circuit/main.ts',
+      readFile: filePath => readFileSync(filePath, 'utf8'),
+    });
 
-    const { circuit: expectedCircuit } = summon.compile('/src/main.ts', {
-      '/src/main.ts': `
-        import isLarger from './isLarger.ts';
+    const { circuit: expectedCircuit } = summon.compile({
+      path: '/src/main.ts',
+      files: {
+        '/src/main.ts': `
+          import isLarger from './isLarger.ts';
 
-        export default function main(a: number, b: number) {
-          return isLarger(a, b) ? a : b;
-        }
-      `,
-      '/src/isLarger.ts': `
-        export default function isLarger(a: number, b: number): boolean {
-          return a > b;
-        }
-      `,
+          export default (io: Summon.IO) => {
+            const a = io.input('alice', 'a', summon.number());
+            const b = io.input('bob', 'b', summon.number());
+
+            io.outputPublic('res', isLarger(a, b));
+          };
+        `,
+        '/src/isLarger.ts': `
+          export default function isLarger(a: number, b: number): boolean {
+            return a > b;
+          }
+        `,
+      },
     });
 
     expect(circuit).to.be.deep.equal(expectedCircuit);
@@ -38,16 +42,22 @@ describe('summon', () => {
 
   it('emits compilation errors ', () => {
     const fun = () =>
-      summon.compile('/src/main.ts', {
-        '/src/main.ts': `
-        export default function main(a: number, b: number) {
-          const c = 0;
+      summon.compile({
+        path: '/src/main.ts',
+        files: {
+          '/src/main.ts': `
+            export default (io: Summon.IO) => {
+              const a = io.input('alice', 'a', summon.number());
+              const b = io.input('bob', 'b', summon.number());
 
-          c = b;
+              const c = 0;
 
-          return a + c;
-        }
-      `,
+              c = b;
+
+              io.outputPublic('res', a + c);
+            };
+          `,
+        },
       });
 
     expect(fun)
@@ -66,15 +76,21 @@ describe('summon', () => {
 
   it('non-error diagnostic is provided without throwing', () => {
     const fun = () =>
-      summon.compile('/src/main.ts', {
-        '/src/main.ts': `
-        export default function main(a: number, b: number) {
-          let c = 0; // lint: c is implicitly const due to capture
-          const f = () => c;
+      summon.compile({
+        path: '/src/main.ts',
+        files: {
+          '/src/main.ts': `
+            export default (io: Summon.IO) => {
+              const a = io.input('alice', 'a', summon.number());
+              const b = io.input('bob', 'b', summon.number());
 
-          return a + c;
-        }
-      `,
+              let c = 0; // lint: c is implicitly const due to capture
+              const f = () => c;
+
+              io.outputPublic('res', a + c);
+            };
+          `,
+        },
       });
 
     const { circuit, diagnostics } = fun();
@@ -86,12 +102,18 @@ describe('summon', () => {
   });
 
   it('compiles addition', () => {
-    const { circuit } = summon.compile('/src/main.ts', {
-      '/src/main.ts': `
-        export default function main(a: number, b: number) {
-          return a + b;
-        }
-      `,
+    const { circuit } = summon.compile({
+      path: '/src/main.ts',
+      files: {
+        '/src/main.ts': `
+          export default (io: Summon.IO) => {
+            const a = io.input('alice', 'a', summon.number());
+            const b = io.input('bob', 'b', summon.number());
+
+            io.outputPublic('main', a + b);
+          }
+        `,
+      },
     });
 
     expect(circuit).to.deep.equal({
@@ -103,25 +125,34 @@ describe('summon', () => {
         2 1 0 1 2 AAdd
       `),
       info: {
-        input_name_to_wire_index: {
-          a: 0,
-          b: 1,
-        },
-        constants: {},
-        output_name_to_wire_index: {
-          main: 2,
-        },
+        constants: [],
+        inputs: [
+          { name: 'a', type: 'number', address: 0, width: 1 },
+          { name: 'b', type: 'number', address: 1, width: 1 },
+        ],
+        outputs: [{ name: 'main', type: 'number', address: 2, width: 1 }],
       },
+      mpcSettings: [
+        { name: 'alice', inputs: ['a'], outputs: ['main'] },
+        { name: 'bob', inputs: ['b'], outputs: ['main'] },
+      ],
     });
   });
 
   it('compiles xor', () => {
-    const { circuit } = summon.compileBoolean('/src/main.ts', 8, {
-      '/src/main.ts': `
-          export default function main(a: number, b: number) {
-            return (a ^ b) & 1;
+    const { circuit } = summon.compile({
+      path: '/src/main.ts',
+      boolifyWidth: 8,
+      files: {
+        '/src/main.ts': `
+          export default (io: Summon.IO) => {
+            const a = io.input('alice', 'a', summon.number());
+            const b = io.input('bob', 'b', summon.number());
+
+            io.outputPublic('main', (a ^ b) & 1);
           }
         `,
+      },
     });
 
     expect(circuit).to.deep.equal({
@@ -142,15 +173,17 @@ describe('summon', () => {
         1 1 17 25 INV
       `),
       info: {
-        input_name_to_wire_index: {
-          a: 0,
-          b: 8,
-        },
-        constants: {},
-        output_name_to_wire_index: {
-          main: 18,
-        },
+        constants: [],
+        inputs: [
+          { name: 'a', type: 'number', address: 0, width: 8 },
+          { name: 'b', type: 'number', address: 8, width: 8 },
+        ],
+        outputs: [{ name: 'main', type: 'number', address: 18, width: 8 }],
       },
+      mpcSettings: [
+        { name: 'alice', inputs: ['a'], outputs: ['main'] },
+        { name: 'bob', inputs: ['b'], outputs: ['main'] },
+      ],
     });
   });
 });
